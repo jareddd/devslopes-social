@@ -13,6 +13,10 @@ import FBSDKLoginKit
 
 class SignInVC: UIViewController {
 
+    @IBOutlet weak var emailField: FancyField!
+    @IBOutlet weak var pwdField: FancyField!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -38,7 +42,9 @@ class SignInVC: UIViewController {
                 print("JARED: User cancled Facebook authentication")
             } else {
                 print("JARED: Successfully authenticated with Facebook")
+                //attempt authentication with Facebook
                 let credential = FIRFacebookAuthProvider.credential(withAccessToken: FBSDKAccessToken.current().tokenString)
+                //attempt authentication with firebase via method below
                 self.firebaseAuth(credential)
             }
             
@@ -46,6 +52,7 @@ class SignInVC: UIViewController {
     }
     
     func firebaseAuth(_ credential: FIRAuthCredential) {
+        //attempt authorization with Firebase
         FIRAuth.auth()?.signIn(with: credential, completion: { (user,error) in
             if error != nil {
                 print("JARED: Unable to authenticate with Firebase - \(error)")
@@ -55,5 +62,25 @@ class SignInVC: UIViewController {
         })
     }
 
+    @IBAction func signinTapped(_ sender: Any) {
+        if let email = emailField.text, let pwd = pwdField.text {
+            FIRAuth.auth()?.signIn(withEmail: email, password: pwd, completion: { (user, error) in
+                if error == nil {
+                    //user exists and the password is good
+                    //print("JARED: Email user authenticated with Firebase, Hurray")
+                } else {
+                    //error user was not able to authenticate
+                    print("JARED: Email user did not authenticate \(error)")
+                    FIRAuth.auth()?.createUser(withEmail: email, password: pwd, completion: { (user, error) in
+                        if error != nil {
+                            print("JARED: Unable to authenticate with Firebase using email")
+                        } else {
+                            print("JARED: Successfully authenticated with Firebase: email user")
+                        }
+                    })
+                }
+            })
+        }
+    }
 }
 
