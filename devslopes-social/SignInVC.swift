@@ -78,7 +78,8 @@ class SignInVC: UIViewController {
             } else {
                 print("JARED: Successfully authenticated with Firebase")
                 if let user = user {
-                    self.completeSignIn(id: user.uid)
+                    let userData = ["provider": credential.provider]
+                    self.completeSignIn(id: user.uid, useData: userData)
                 }
                 
             }
@@ -92,7 +93,8 @@ class SignInVC: UIViewController {
                     //user exists and the password is good
                     //print("JARED: Email user authenticated with Firebase, Hurray")
                     if let user = user {
-                        self.completeSignIn(id: user.uid)
+                        let userData = ["provider": user.providerID]
+                        self.completeSignIn(id: user.uid, useData: userData)
                     }
                 } else {
                     print("JARED: (before cre user) user and password: \(email) and \(pwd)")
@@ -105,7 +107,8 @@ class SignInVC: UIViewController {
                         } else {
                             print("JARED: Successfully authenticated with Firebase: email user")
                             if let user = user {
-                                self.completeSignIn(id: user.uid)
+                                let userData = ["provider": user.providerID]
+                                self.completeSignIn(id: user.uid, useData: userData)
                             }
                         }
                     })
@@ -114,7 +117,8 @@ class SignInVC: UIViewController {
         }
     }
     
-    func completeSignIn(id: String) {
+    func completeSignIn(id: String, useData: Dictionary<String, String>) {
+        DataService.ds.createFirebaseUser(uid: id, userData: useData)
         let keychainResult = KeychainWrapper.standard.set(id, forKey: KEY_UID)
         print("JARED: Data saved to keychain \(keychainResult)")
         performSegue(withIdentifier: "goToFeed", sender: nil)
