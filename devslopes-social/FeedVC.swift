@@ -21,6 +21,17 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         tableView.delegate = self;
         tableView.dataSource = self;
         // Do any additional setup after loading the view.
+        
+        //reference to the singleton - looking for any .value changes
+        //command click on the .value will open to show the values that you can fire events off of e.g. child added etc.
+//        DataService.ds.REF_POSTS.observe(.value, with: { (snapshot) in
+//            print(snapshot.value)
+//        })
+        
+        DataService.ds.REF_POSTS.observe(.value, with: { (FIRDataSnapshot) in
+            print(FIRDataSnapshot.value as Any)
+        })
+        
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
