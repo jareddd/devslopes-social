@@ -39,6 +39,7 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                     }
                 }
             }
+            print("JARED: qty of posts \(self.posts.count)")
             self.tableView.reloadData()
         })
         
@@ -57,8 +58,16 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         //test
         let post = posts[indexPath.row]
         print("JARED: \(post.caption)")
-        
-        return tableView.dequeueReusableCell(withIdentifier:  "PostCell") as! PostCell
+
+        if let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell") as? PostCell {
+            cell.configureCell(post: post)
+            return cell
+            
+        } else {
+            //this is for safety this should never run
+            return PostCell()
+        }
+        // (removed temp code) return cell tableView.dequeueReusableCell(withIdentifier:  "PostCell") as! PostCell
     }
 
     override func didReceiveMemoryWarning() {
