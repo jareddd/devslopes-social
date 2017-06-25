@@ -15,6 +15,10 @@ let DB_BASE = FIRDatabase.database().reference()
 //this contains the URL of the root of the database
 //this information is found in the GoogleService-info.plist - its there as this variable
 
+//reference to the images on firebase - pulling in from the firebase pod 'Firebase/Storage'
+let STORAGE_BASE = FIRStorage.storage().reference()
+
+
 class DataService {
     //referencing the end points to the database
     //common end points
@@ -26,9 +30,14 @@ class DataService {
     //common end points
     
     //everything is globally accessible
+    // DB references
     private var _REF_BASE = DB_BASE //root of the db
     private var _REF_POSTS = DB_BASE.child("posts")
     private var _REF_USERS = DB_BASE.child("users")
+    
+    // Storage References
+    private var _REF_POST_IMAGES = STORAGE_BASE.child("post-pics")
+    
     
     var REF_BASE: FIRDatabaseReference {
         return _REF_BASE
@@ -40,6 +49,10 @@ class DataService {
     
     var REF_USERS: FIRDatabaseReference {
         return _REF_USERS
+    }
+    
+    var REF_IMAGES: FIRStorageReference {
+        return _REF_POST_IMAGES
     }
     
     func createFirebaseUser(uid: String, userData: Dictionary<String, String>) {

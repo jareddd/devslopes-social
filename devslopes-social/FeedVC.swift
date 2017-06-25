@@ -20,6 +20,9 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
     //image picker
     var imagePicker: UIImagePickerController!//forcefully unwrap
     
+    // image cache
+    static var imageCache: NSCache<NSString, UIImage> = NSCache()
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,8 +75,20 @@ class FeedVC: UIViewController, UITableViewDelegate, UITableViewDataSource, UIIm
         print("JARED: \(post.caption)")
 
         if let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell") as? PostCell {
-            cell.configureCell(post: post)
-            return cell
+            
+            // pass in image if it exists in the cache
+            
+            //check cache
+            if let img = FeedVC.imageCache.object(forKey: post.imageURL as NSString) {
+                cell.configureCell(post: post, img: img)
+                return cell
+            } else {
+                cell.configureCell(post: post) // don't need to pass in nil because it is the default
+                return cell
+            }
+            
+//            cell.configureCell(post: post)
+//            return cell
             
         } else {
             //this is for safety this should never run
